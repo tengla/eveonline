@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"strings"
 	"time"
 )
 
@@ -18,6 +17,12 @@ type UniverseName struct {
 	Category string `json:"category"`
 	ID       int    `json:"id"`
 	Name     string `json:"name"`
+}
+
+// PrettyPrint UniverseName instance
+func (u UniverseName) PrettyPrint() string {
+	return fmt.Sprintf("%s, Id: %d, Category: %s", u.Name, u.ID,
+		u.Category)
 }
 
 // Order
@@ -42,33 +47,13 @@ type OrderList []Order
 // UniverseNameList
 type UniverseNameList []UniverseName
 
-func (list UniverseNameList) FindByName(name string) (UniverseName, error) {
+func (list UniverseNameList) FindByName(name string) (*UniverseName, error) {
 	for _, universeName := range list {
 		if universeName.Name == name {
-			return universeName, nil
+			return &universeName, nil
 		}
 	}
-	var null UniverseName
-	return null, errors.New("UniverseName not found")
-}
-
-// PrettyPrintOrder
-func (o Order) PrettyPrintOrder() string {
-	props := []string{
-		fmt.Sprintf("Duration=%d", o.Duration),
-		fmt.Sprintf("IsBuyOrder=%t", o.IsBuyOrder),
-		fmt.Sprintf("Issued=%s", o.Issued),
-		fmt.Sprintf("LocationID=%d", o.LocationID),
-		fmt.Sprintf("MinVolume=%d", o.MinVolume),
-		fmt.Sprintf("Range=%s", o.Range),
-		fmt.Sprintf("SystemId=%d", o.SystemID),
-		fmt.Sprintf("TypeID=%d", o.TypeID),
-		fmt.Sprintf("VolumeRemain=%d", o.VolumeRemain),
-		fmt.Sprintf("VolumeTotal=%d", o.VolumeTotal),
-		fmt.Sprintf("Price=%.2f", o.Price),
-		fmt.Sprintf("OrderID=%d", o.OrderID),
-	}
-	return fmt.Sprintf("Order(%s)", strings.Join(props, ",\n    "))
+	return nil, errors.New("UniverseName not found")
 }
 
 // GetOrders
