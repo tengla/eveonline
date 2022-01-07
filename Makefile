@@ -1,2 +1,14 @@
+
+.PHONY: build run clean test
+
 build:
-	go build -o dist/client cmd/cli/main.go
+	docker build -t evetest .
+
+run:
+	docker run --rm -it evetest
+
+clean:
+	docker image rm evetest
+
+test:
+	go test ./eveapi

@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
+	"sort"
 	"time"
 )
 
@@ -47,6 +49,7 @@ type OrderList []Order
 // UniverseNameList
 type UniverseNameList []UniverseName
 
+// FindByName
 func (list UniverseNameList) FindByName(name string) (*UniverseName, error) {
 	for _, universeName := range list {
 		if universeName.Name == name {
@@ -54,6 +57,36 @@ func (list UniverseNameList) FindByName(name string) (*UniverseName, error) {
 		}
 	}
 	return nil, errors.New("UniverseName not found")
+}
+
+func (list UniverseNameList) LexSortByName() UniverseNameList {
+	sorted := UniverseNameList{}
+	names := []string{}
+	for _, u := range list {
+		names = append(names, u.Name)
+	}
+	sort.Strings(names)
+	for _, name := range names {
+		u, err := list.FindByName(name)
+		if err != nil {
+			log.Fatal(err)
+		}
+		sorted = append(sorted, *u)
+	}
+	return sorted
+}
+
+// UniqIds
+func (list OrderList) UniqIds() []int {
+	found := map[int]bool{}
+	result := []int{}
+	for _, u := range list {
+		if !found[u.TypeID] {
+			found[u.TypeID] = true
+			result = append(result, u.TypeID)
+		}
+	}
+	return result
 }
 
 // GetOrders
