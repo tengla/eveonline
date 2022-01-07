@@ -6,5 +6,6 @@ COPY cmd cmd
 COPY eveapi eveapi
 ENV CGO_ENABLED=0
 ENV GOOS=linux
-RUN go test -v ./eveapi && go build -o dist/client cmd/cli/main.go
-CMD [ "./dist/client" ]
+RUN go test -c -o /go/bin/eveapi.test ./eveapi && eveapi.test -test.v
+RUN go build -o /go/bin/eve-client cmd/cli/main.go
+CMD [ "eve-client" ]
