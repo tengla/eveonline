@@ -11,4 +11,5 @@ clean:
 	docker image rm evetest
 
 test:
-	go test ./eveapi
+	go test -c -o ./dist/eveapi.test ./eveapi
+	CONFIG=./config.yml ./dist/eveapi.test -test.v

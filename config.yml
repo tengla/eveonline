@@ -1,0 +1,4 @@
+
+urls:
+  ordersUrl: https://esi.evetech.net/latest/markets/10000002/orders/?datasource=tranquility&order_type=all&page=1
+  lookupUrl: https://esi.evetech.net/latest/universe/names/?datasource=tranquility

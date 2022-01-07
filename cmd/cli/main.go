@@ -8,14 +8,18 @@ import (
 )
 
 func main() {
+	cfg, err := eveapi.ReadConfig("./config.yml")
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	orders, err := eveapi.GetOrders()
+	orders, err := eveapi.GetOrders(cfg)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	universeNames, err := eveapi.GetUniverseNames(
-		orders.UniqIds())
+		cfg, orders.UniqIds())
 
 	if err != nil {
 		log.Fatal(err)

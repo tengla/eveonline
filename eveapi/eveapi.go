@@ -7,12 +7,12 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"sort"
 	"time"
-)
 
-const ordersUrl = "https://esi.evetech.net/latest/markets/10000002/orders/?datasource=tranquility&order_type=all&page=1"
-const lookupUrl = "https://esi.evetech.net/latest/universe/names/?datasource=tranquility"
+	"gopkg.in/yaml.v2"
+)
 
 // UniverseNames
 type UniverseName struct {
@@ -41,6 +41,26 @@ type Order struct {
 	VolumeTotal  int       `json:"volume_total"`
 	Price        float64   `json:"price"`
 	OrderID      int       `json:"order_id"`
+}
+
+type Config struct {
+	Urls struct {
+		OrdersUrl string `yaml:"ordersUrl"`
+		LookupUrl string `yaml:"lookupUrl"`
+	} `yaml:"urls"`
+}
+
+func ReadConfig(filename string) (Config, error) {
+	var c Config
+	cfg, err := os.ReadFile(filename)
+	if err != nil {
+		return c, err
+	}
+	err = yaml.Unmarshal(cfg, &c)
+	if err != nil {
+		return c, err
+	}
+	return c, nil
 }
 
 // OrderList
@@ -90,8 +110,8 @@ func (list OrderList) UniqIds() []int {
 }
 
 // GetOrders
-func GetOrders() (OrderList, error) {
-	resp, err := http.Get(ordersUrl)
+func GetOrders(cfg Config) (OrderList, error) {
+	resp, err := http.Get(cfg.Urls.OrdersUrl)
 	if err != nil {
 		return nil, err
 	}
@@ -102,10 +122,10 @@ func GetOrders() (OrderList, error) {
 }
 
 // GetUniverseNames
-func GetUniverseNames(ids []int) (UniverseNameList, error) {
+func GetUniverseNames(cfg Config, ids []int) (UniverseNameList, error) {
 	data, _ := json.Marshal(ids)
 	body := bytes.NewBuffer(data)
-	resp, err := http.Post(lookupUrl, "application/json", body)
+	resp, err := http.Post(cfg.Urls.LookupUrl, "application/json", body)
 	if err != nil {
 		return nil, err
 	}
