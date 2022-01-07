@@ -76,7 +76,8 @@ func (list UniverseNameList) FindByName(name string) (*UniverseName, error) {
 			return &universeName, nil
 		}
 	}
-	return nil, errors.New("UniverseName not found")
+	msg := fmt.Sprintf("UniverseName: %s not found", name)
+	return nil, errors.New(msg)
 }
 
 func (list UniverseNameList) LexSortByName() UniverseNameList {
@@ -89,7 +90,7 @@ func (list UniverseNameList) LexSortByName() UniverseNameList {
 	for _, name := range names {
 		u, err := list.FindByName(name)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 		sorted = append(sorted, *u)
 	}
