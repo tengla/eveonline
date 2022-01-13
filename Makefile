@@ -13,3 +13,4 @@ clean:
 test:
 	go test -c -o ./dist/eveapi.test ./eveapi
 	CONFIG=./config.yml ./dist/eveapi.test -test.v
+	CONFIG=./config.yml ./dist/eveapi.test -test.bench .

@@ -43,6 +43,8 @@ type Order struct {
 	OrderID      int       `json:"order_id"`
 }
 
+var cfg Config
+
 type Config struct {
 	Urls struct {
 		OrdersUrl string `yaml:"ordersUrl"`
@@ -50,17 +52,16 @@ type Config struct {
 	} `yaml:"urls"`
 }
 
-func ReadConfig(filename string) (Config, error) {
-	var c Config
-	cfg, err := os.ReadFile(filename)
+func ReadConfig(filename string) error {
+	_cfg, err := os.ReadFile(filename)
 	if err != nil {
-		return c, err
+		return err
 	}
-	err = yaml.Unmarshal(cfg, &c)
+	err = yaml.Unmarshal(_cfg, &cfg)
 	if err != nil {
-		return c, err
+		return err
 	}
-	return c, nil
+	return nil
 }
 
 // OrderList
@@ -111,7 +112,7 @@ func (list OrderList) UniqIds() []int {
 }
 
 // GetOrders
-func GetOrders(cfg Config) (OrderList, error) {
+func GetOrders() (OrderList, error) {
 	resp, err := http.Get(cfg.Urls.OrdersUrl)
 	if err != nil {
 		return nil, err
@@ -123,7 +124,7 @@ func GetOrders(cfg Config) (OrderList, error) {
 }
 
 // GetUniverseNames
-func GetUniverseNames(cfg Config, ids []int) (UniverseNameList, error) {
+func GetUniverseNames(ids []int) (UniverseNameList, error) {
 	data, _ := json.Marshal(ids)
 	body := bytes.NewBuffer(data)
 	resp, err := http.Post(cfg.Urls.LookupUrl, "application/json", body)
